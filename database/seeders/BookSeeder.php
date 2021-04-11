@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Book;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -16,8 +15,8 @@ class BookSeeder extends Seeder
     public function run()
     {
         $this->createBook(1, 'GRAMMAR', 9246);
-        $this->createBook(1, 'VOCABULARY', 5859);
-        $this->createBook(1, 'MISCELLANEOUS', 1056);
+        $this->createBook(2, 'VOCABULARY', 5859);
+        $this->createBook(3, 'MISCELLANEOUS', 1056);
     }
 
     public function createBook($book, $topic, $questions_count) {

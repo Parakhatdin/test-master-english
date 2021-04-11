@@ -15,19 +15,17 @@ class BookTransformer extends TransformerAbstract
     /**
      * Transform the Book entity.
      *
-     * @param \App\Models\Book $model
+     * @param Book $model
      *
      * @return array
      */
     public function transform(Book $model)
     {
         return [
-            'id'         => (int) $model->id,
-
-            /* place your other model properties here */
-
-            'created_at' => $model->created_at,
-            'updated_at' => $model->updated_at
+            'id' => (int) $model->id,
+            'book' => (int) $model->book,
+            'topic' => (string) $model->topic,
+            'questions_count' => (int) $model->questions_count
         ];
     }
 }

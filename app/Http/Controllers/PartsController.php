@@ -2,43 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Presenters\BookPresenter;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use Illuminate\Http\Response;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
-use App\Http\Requests\BookCreateRequest;
-use App\Http\Requests\BookUpdateRequest;
-use App\Repositories\Interfaces\BookRepository;
-use App\Validators\BookValidator;
+use App\Http\Requests\PartCreateRequest;
+use App\Http\Requests\PartUpdateRequest;
+use App\Repositories\Interfaces\PartRepository;
+use App\Validators\PartValidator;
 
 /**
- * Class BooksController.
+ * Class PartsController.
  *
  * @package namespace App\Http\Controllers;
  */
-class BooksController extends Controller
+class PartsController extends Controller
 {
     /**
-     * @var BookRepository
+     * @var PartRepository
      */
     protected $repository;
 
     /**
-     * @var BookValidator
+     * @var PartValidator
      */
     protected $validator;
 
     /**
-     * BooksController constructor.
+     * PartsController constructor.
      *
-     * @param BookRepository $repository
-     * @param BookValidator $validator
+     * @param PartRepository $repository
+     * @param PartValidator $validator
      */
-    public function __construct(BookRepository $repository, BookValidator $validator)
+    public function __construct(PartRepository $repository, PartValidator $validator)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
@@ -47,43 +44,37 @@ class BooksController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return JsonResponse|Response
+     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($book_id)
     {
-        $books = $this->repository->setPresenter(BookPresenter::class)->all();
+        $parts = $this->repository->findWhere(['book_id' => $book_id])->all();
 
-//        if (request()->wantsJson()) {
-//
-//            return response()->json([
-//                'data' => $books,
-//            ]);
-//        }
-
-        return response()->json($books['data']);
-//        return view('books.index', compact('books'));
+        return response()->json([
+            'data' => $parts,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  BookCreateRequest $request
+     * @param  PartCreateRequest $request
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      *
-     * @throws ValidatorException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
-    public function store(BookCreateRequest $request)
+    public function store(PartCreateRequest $request)
     {
         try {
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
 
-            $book = $this->repository->create($request->all());
+            $part = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'Book created.',
-                'data'    => $book->toArray(),
+                'message' => 'Part created.',
+                'data'    => $part->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -107,16 +98,15 @@ class BooksController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $book_id
-     *
-     * @return Response
+     * @param $part_id
+     * @return \Illuminate\Http\Response
      */
-    public function show($book_id)
+    public function show($part_id)
     {
-        $book = $this->repository->find($book_id);
+        $part = $this->repository->find($part_id);
 
         return response()->json([
-            'data' => $book,
+            'data' => $part,
         ]);
     }
 
@@ -125,36 +115,36 @@ class BooksController extends Controller
      *
      * @param  int $id
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        $book = $this->repository->find($id);
+        $part = $this->repository->find($id);
 
-        return view('books.edit', compact('book'));
+        return view('parts.edit', compact('part'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  BookUpdateRequest $request
+     * @param  PartUpdateRequest $request
      * @param  string            $id
      *
      * @return Response
      *
-     * @throws ValidatorException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
-    public function update(BookUpdateRequest $request, $id)
+    public function update(PartUpdateRequest $request, $id)
     {
         try {
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            $book = $this->repository->update($request->all(), $id);
+            $part = $this->repository->update($request->all(), $id);
 
             $response = [
-                'message' => 'Book updated.',
-                'data'    => $book->toArray(),
+                'message' => 'Part updated.',
+                'data'    => $part->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -183,7 +173,7 @@ class BooksController extends Controller
      *
      * @param  int $id
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
@@ -192,11 +182,11 @@ class BooksController extends Controller
         if (request()->wantsJson()) {
 
             return response()->json([
-                'message' => 'Book deleted.',
+                'message' => 'Part deleted.',
                 'deleted' => $deleted,
             ]);
         }
 
-        return redirect()->back()->with('message', 'Book deleted.');
+        return redirect()->back()->with('message', 'Part deleted.');
     }
 }
